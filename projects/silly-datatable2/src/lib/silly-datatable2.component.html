@@ -1,0 +1,101 @@
+<table [ngClass]="settings?.tableClass">
+
+    <tr [ngClass]="settings?.headerRowClass">
+        <th *ngIf="settings?.batchSelect"
+            [ngClass]="settings?.selectAllThClass">
+            <div [ngClass]="settings?.selectAllContainerClass">
+                <input type="checkbox"
+                    [formControl]="selectAll"
+                    [ngClass]="settings?.selectAllCheckboxClass"
+                    [disableControl]="!tableParams?.source?.length">
+                <div [ngClass]="settings?.selectAllCheckboxLabelContainerClass">
+                    <label class="{{ settings?.selectAllCheckboxLabelClass }}">
+                        {{ settings?.selectAllCheckboxLabel }}</label>
+                </div>
+            </div>
+        </th>
+
+        <th *ngFor="let column of columns | filter:'show'; trackBy:trackByFn"
+            [ngClass]="column.headerClass">
+            <ng-container *ngIf="column.sortable; else withoutSort">
+                <a [ngClass]="settings?.sortHeaderClass"
+                    [class.asc]="currentSort?.columnName === column.id && !currentSort?.isDesc"
+                    [class.desc]="currentSort?.columnName === column.id && currentSort?.isDesc"
+                    (click)="sortEnable(column.id)">
+                    {{ column.title }}
+                </a>
+            </ng-container>
+
+            <ng-template #withoutSort>
+                {{ column.title }}
+            </ng-template>
+        </th>
+    </tr>
+
+    <ng-container *ngIf="tableParams?.source?.length; else withoutSource">
+        <tr *ngFor="let row of tableParams?.source; let i = index"
+            #tr
+            [ngClass]="settings?.rowClass">
+            <ng-container *ngIf="settings?.batchSelect && checkboxes?.controls?.length">
+                <td [ngClass]="settings?.batchSelectTdClass">
+                    <form [formGroup]="batchSelectFormGroup"
+                        novalidate>
+                        <ng-container formArrayName="checkboxes">
+                            <div [ngClass]="settings?.batchSelectCheckboxContainerClass">
+                                <ng-container *ngIf="checkboxes.controls[i]">
+                                    <input type="checkbox"
+                                        [formControlName]="i"
+                                        [ngClass]="settings?.batchSelectCheckboxClass">
+                                    <div [ngClass]="settings?.batchSelectCheckboxLabelContainerClass">
+                                        <label class="{{ settings?.batchSelectCheckboxLabelClass }}">{{
+                                            settings?.batchSelectCheckboxLabel }}</label>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </form>
+                </td>
+            </ng-container>
+
+            <ng-container *ngFor="let column of columns | filter:'show'; trackBy:trackByFn">
+                <td *ngIf="!column.componentCell; else componentCell"
+                    #td
+                    [ngClass]="column.cellClass"
+                    (click)="clicked($event, row)"
+                    (dblclick)="doubleClicked($event, row)">
+
+                    <ng-container [ngSwitch]="true">
+                        <ng-container *ngSwitchCase="!!column.prepareCellFunction">
+                            {{ column.prepareCellFunction(getSourceValue(row, column.id), row, td, tr) }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchDefault>
+                            {{ getSourceValue(row, column.id) }}
+                        </ng-container>
+                    </ng-container>
+                </td>
+
+                <ng-template #componentCell>
+                    <td #td
+                        [ngClass]="column.cellClass">
+                        <ngx-component-cell [row]="row"
+                            [columnId]="column.id"
+                            [component]="column.componentCell"
+                            (componentCellEvent)="onComponentCellEvent($event)"
+                            (loaded)="column.prepareCellFunction && column.prepareCellFunction($event, row, td, tr)">
+                        </ngx-component-cell>
+                    </td>
+                </ng-template>
+            </ng-container>
+
+        </tr>
+    </ng-container>
+</table>
+
+<ng-template #withoutSource>
+    <tr [ngClass]="settings?.rowClass">
+        <td [attr.colspan]="columns?.length">
+            {{ settings?.dataNotFoundPhrase || 'Data not found' }}
+        </td>
+    </tr>
+</ng-template>

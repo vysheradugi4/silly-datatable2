@@ -102,6 +102,37 @@
           }
         }
       }
+    },
+    "silly-datatable2": {
+      "projectType": "library",
+      "root": "projects/silly-datatable2",
+      "sourceRoot": "projects/silly-datatable2/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/silly-datatable2/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/silly-datatable2/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/silly-datatable2/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/silly-datatable2/src/test.ts",
+            "tsConfig": "projects/silly-datatable2/tsconfig.spec.json",
+            "karmaConfig": "projects/silly-datatable2/karma.conf.js"
+          }
+        }
+      }
     }
   }
 }

@@ -1,0 +1,10 @@
+<ngx-silly-datatable2-paging #tablePaging
+    [settings]="paginationSettings"
+    [pageOf]="pageOf">
+</ngx-silly-datatable2-paging>
+
+<ng-template #pageOf
+    let-currentPage="currentPage"
+    let-numberOfPages="numberOfPages">
+    Pager {{ currentPage + 1 }} of {{ numberOfPages }}
+</ng-template>

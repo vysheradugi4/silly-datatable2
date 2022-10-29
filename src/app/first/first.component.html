@@ -1,0 +1,66 @@
+Routing: <button routerLink="/second">Second</button>
+
+<hr>
+
+<ng-template #prefix>
+    <label for="search">Search field</label>
+    <br>
+</ng-template>
+
+<ngx-silly-datatable2-search #searchComponent
+    inputId="search"
+    placeholder="Search..."
+    inputClass="search-field"
+    [prefix]="prefix"
+    [suffix]="suffix"
+    [disabled]="loading"></ngx-silly-datatable2-search>
+
+<ng-template #suffix>
+    <br>
+    <span>required</span>
+</ng-template>
+
+<hr>
+<div>
+    <ngx-silly-datatable id="sole"
+        [searchComponent]="searchComponent"
+        [filterComponent]="filterComponent"
+        [pagingComponent]="pagingComponent"
+        [optionsComponent]="optionsComponent"
+        [settings]="settings"
+        [columns]="columns"
+        [(tableParams)]="tableParams"
+        (rowClicked)="selected($event)"
+        (rowDoubleClicked)="dblClickSelected($event)"
+        (componentCellEvent)="eventInCellComponent($event)"
+        (batchSelected)="batchSelected($event)">
+    </ngx-silly-datatable>
+</div>
+
+<hr>
+
+<app-table-paging (paging)="getPaging($event)"></app-table-paging>
+
+<hr>
+
+<ngx-silly-datatable2-filter #filterComponent
+    [formFields]="filterFormFields"
+    [settings]="filterSettings"
+    (valueChanges)="filterValueChanges($event)">
+</ngx-silly-datatable2-filter>
+
+<ng-template #customInput
+    let-filterFieldSettings="filterFieldSettings"
+    let-formControl="formControl"
+    let-touched="touched">
+    <input [formControl]="formControl"
+        [id]="filterFieldSettings.id"
+        type="text"
+        [ngClass]="filterFieldSettings.controlClass"
+        [placeholder]="filterFieldSettings.placeholder"
+        (blur)="touched()">
+</ng-template>
+
+<hr>
+
+<app-table-options (options)="getOptions($event)"></app-table-options>
